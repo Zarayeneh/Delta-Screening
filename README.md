@@ -5,11 +5,13 @@ A tool to detect and track communities within dynamic networks. I am continuousl
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+The Delta-Screening approach can be integrated into any modularity-based algorithm to detect communities. Here, we have integrated it into the Louvain algorithm; therefore, we have provided the test result for this method. In order to run this framework we need data preprocessing:
+1. divide the changes at each time step into deletion and addition 
+2. make sure at each time step we are not deleting the same edges that we have already deleted before
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+Must need GCC version at least 5.0
 
 ```
 Give examples
