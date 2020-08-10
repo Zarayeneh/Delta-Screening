@@ -1,12 +1,7 @@
 # Delta-Screening
-A tool to detect and track communities within dynamic networks. I am continuously updating the software focusing on the user experience. If you have any suggestion, please email to the developer.
-
-Pre-requisite for installation:
-
-
-# Project Title
 
 One Paragraph of project description goes here
+A tool to detect and track communities within dynamic networks. I am continuously updating the software focusing on the user experience. If you have any suggestion, please email to the developer.
 
 ## Getting Started
 
