@@ -14,7 +14,9 @@ The Delta-Screening approach can be integrated into any modularity-based algorit
 Must need GCC version at least 5.0
 
 ```
-Give examples
+$ sudo apt update
+$ sudo apt install build-essential
+$ gcc --version
 ```
 
 ### Installing
