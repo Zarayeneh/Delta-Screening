@@ -1,92 +1,36 @@
-# Delta-Screening
+# README #
 
-One Paragraph of project description goes here
-A tool to detect and track communities within dynamic networks. I am continuously updating the software focusing on the user experience. If you have any suggestion, please email to the developer.
 
-## Getting Started
+### What is this repository for? ###
 
-The Delta-Screening approach can be integrated into any modularity-based algorithm to detect communities. Here, we have integrated it into the Louvain algorithm; therefore, we have provided the test result for this method. In order to run this framework we need data preprocessing:
-1. divide the changes at each time step into deletion and addition 
-2. make sure at each time step we are not deleting the same edges that we have already deleted before
+* This project implement Delta-screening method and integrate it with static Louvain algorithm. The framework can be used to detect community structures within dynamic networks. This framework is built in C++ and can be applied to other static modularity-based algorithm to track the communities in evolving networks
+* The code can be run with  gcc>=5.0, c++11. The code is multi-platform and compiles on Linux, Mac OSX and Windows.
 
-### Prerequisites
+### Citation information: ###
 
-Must need GCC version at least 5.0
+N. Zarayeneh, A. Kalyanaraman.
+"Delta-Screening: A Fast and Efficient Technique to Update Communities in Dynamic Graphs." 
+IEEE Transactions on Network Science and Engineering 8.2 (2021): 1614-1629. DOI: 10.1109/TNSE.2021.3067665
 
-```
-$ sudo apt update
-$ sudo apt install build-essential
-$ gcc --version
-```
+### How do I get set up? ###
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* Download the respository
+* cd dynamic_community_detection
+*  **Preprocess data**
+    1. ***Addition and deletion chunks:*** Split the change files for each time step and get two text files for addition and deletion (name them consistently: name_of_addition0.txt, name_of_deletion0.txt, name_of_addition1.txt,name_of_deletion1, ...)
+    2. ***Create simple graph inputs:*** The input graph and changes are assumed to be simple, so you can use the Preprocess.R to make all your inputs simple
+*  **Steps to detect communities at each time step** 
+    1. ***Input conversion:*** convert input graph format (a text in which each line contains a pair "source destination") to Binary format  ``` ./convert -i graph.txt -o graph.bin ``` This project can also be used to convert weighted graphs (a text in which each line contains a triple "source destination weight") using -w option: ```./convert -i graph.txt -o graph.bin -w graph.weights``` Moreover, to save space in some cases, nodes can be renumbered from 0 to nb_nodes-1 using -r option: ```./convert -i graph.txt -o graph.bin -r labelings_connection_file.txt```  
+    2. ***Compute communities:*** specify the quality function and display hierarchical tree ```./louvain graph.bin -l -1 -v -q id_qual -x delta_add -a 1 -b delta_del``` To ensure a faster computation (with a loss of quality), one can use -e option to stop furthur computation to get higher modularity when the increas in modularity is below epsilon for a given iteration: ```./louvain graph.bin -l -1 -q id_qual  -x delta_add -a 1 -b delta_del -e 0.001```  If thenetwork is weighted we use -w option: ```./louvain graph.bin -l -1 -q id_qual  -x delta_add -a 1 -b delta_del -w graph.weights``` . For the initial step, the algorithm can also start with any given partition using -p option ```./louvain graph.bin -q id_qual  -x delta_add -a 1 -b delta_del -p graph.part -v ``` 
+    3. ***Display information on the tree structure:*** it shows the number of hierarchical levels and nodes per level ```./hierarchy graphi.tree``` (like garph0.tree for time step 0, graph1.tree for time step 1,...) We can specify to display the nodes within each community for a given level of the tree: ```./hierarchy graphi.tree -l 2 > graph_node2comm_level2``` or display the nodes within each community for the last level of the tree: ```./hierarchy graphi.tree -m > graph_node2comm_lastlevel``` 
+ 
+### Run the code with the provided examples ###
+*  **Toy example**
+    1. ```./convert -i Example.txt -o graph.bin ``` (put the example files in the same folder as the src is located)
+    2. ```./louvain graph.bin -l -1 -v -q id_qual -x delta_add -a 1 -b delta_del``` 
+*  **Citation example** 
+    1. We used the citation graph (Arxiv  HEP-TH) for this example. This dataset covers papers published between 1993 and 2002.Consequently,  we  partitioned  this  period  into  10  timesteps (one for each year).
+    2. In the Preprocess.R code, set the directory path to the folder containing the cittion example that you have downloaded and run the code
+    3. ```./convert -i cite.txt -o graph.bin``` 
+    4. ```./louvain graph.bin -l -1 -v -q id_qual -x cite_add -a 1 -b cite_del``` 
+    
